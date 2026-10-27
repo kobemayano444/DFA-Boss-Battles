@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080c18" />
+  <meta name="description" content="Dead State Hunt — a playable DFA boss battle for Theory of Computation." />
+  <title>Dead State Hunt | DFA Boss Battle</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="Boss 1.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a href="#" class="brand" aria-label="Dead State Hunt home">
+        <span class="brand-symbol" aria-hidden="true">∅</span>
+        <span class="brand-copy"><strong>DEAD STATE <span>HUNT</span></strong><small>THEORY OF COMPUTATION · BOSS RUSH</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="edition">CS 6041 <span class="edition-divider">/</span> FALL 2026</span>
+        <div class="score-pill"><span class="score-spark">✦</span> <strong id="totalScore">0</strong> <span>PTS</span></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro" aria-label="Game introduction">
+        <div class="eyebrow"><span class="signal-dot"></span> TWO BOSSES. ONE OBJECTIVE.</div>
+        <h1>Break the machine.<br /><em>Find the dead state.</em></h1>
+        <p>Each boss is a deterministic finite automaton. Enter a binary string, watch its transitions, and trap it in a state from which <strong>no accepting state is reachable.</strong></p>
+      </section>
+
+      <nav class="level-nav" aria-label="Choose a boss">
+        <button class="level-tab selected" type="button" data-boss="gatekeeper" aria-pressed="true">
+          <span class="level-num">01</span>
+          <span class="level-identity"><strong>THE GATEKEEPER</strong><small>Pattern recognition · Beginner</small></span>
+          <span class="level-outcome" id="status-gatekeeper">UNDEFEATED</span>
+        </button>
+        <button class="level-tab" type="button" data-boss="parity" aria-pressed="false">
+          <span class="level-num">02</span>
+          <span class="level-identity"><strong>THE PARITY KNIGHT</strong><small>State tracking · Intermediate</small></span>
+          <span class="level-outcome" id="status-parity">UNDEFEATED</span>
+        </button>
+      </nav>
+
+      <section class="battle-layout" aria-label="Boss arena">
+        <article class="boss-panel panel" id="bossPanel">
+          <div class="panel-topline"><span class="panel-kicker">BOSS ENCOUNTER</span><span class="rank" id="bossRank">RANK 01 / INITIATE</span></div>
+          <div class="boss-portrait" id="bossPortrait" aria-hidden="true">
+            <div class="orbit orbit-outside"></div>
+            <div class="orbit orbit-inside"></div>
+            <div class="rune rune-one">0</div><div class="rune rune-two">1</div><div class="rune rune-three">δ</div>
+            <div class="portrait-halo"></div>
+            <div class="boss-figure" id="bossFigure">
+              <div class="boss-horns"><i></i><i></i></div>
+              <div class="boss-helmet"><div class="helmet-crown"></div><div class="helmet-face"><span class="eye"></span><span class="eye"></span></div><div class="helmet-chin"></div></div>
+              <div class="boss-shoulders"></div><div class="boss-armor"><span>∅</span></div>
+            </div>
+            <div class="portrait-floor"></div>
+            <div class="boss-defeated-stamp" id="defeatedStamp">DEFEATED</div>
+          </div>
+          <div class="boss-info">
+            <div class="boss-heading"><div><div class="eyebrow mini" id="bossSubtitle">THE FIRST TRIAL</div><h2 id="bossTitle">The Gatekeeper</h2></div><span class="difficulty" id="difficulty">EASY</span></div>
+            <p class="boss-lore" id="bossLore">One wrong step can seal the gate forever.</p>
+            <div class="health-row"><span>BOSS INTEGRITY</span><strong id="healthText">100 / 100</strong></div>
+            <div class="health-track"><div class="health-fill" id="healthFill"></div></div>
+            <div class="boss-stats"><div><span>ATTEMPTS</span><strong id="attemptCount">0</strong></div><div><span>MIN. ATTACK</span><strong id="minLength">2 bits</strong></div><div><span>BEST SCORE</span><strong id="bestScore">—</strong></div></div>
+          </div>
+        </article>
+
+        <article class="machine-panel panel">
+          <div class="panel-topline"><span class="panel-kicker">AUTOMATON ANALYSIS</span><span class="machine-id" id="machineId">M₁ = (Q, {0,1}, δ, q₀, F)</span></div>
+          <div class="machine-head"><div><h2>State diagram</h2><p>Transitions are deterministic. Every state has one path for each symbol.</p></div><div class="live-indicator"><span></span> LIVE TRACE</div></div>
+          <div class="diagram-wrap" id="diagramWrap">
+            <svg id="dfaGraph" class="dfa-graph" viewBox="0 0 660 300" role="img" aria-label="DFA state diagram"></svg>
+          </div>
+          <div class="graph-legend"><span><i class="legend-dot start"></i> Start / accepting</span><span><i class="legend-dot accept"></i> Accepting</span><span><i class="legend-dot normal"></i> Nonaccepting</span><span><i class="legend-dot dead"></i> Dead</span></div>
+          <div class="transition-table-wrap"><div class="table-title"><span>TRANSITION TABLE</span><span id="acceptingSummary">F = {q₀}</span></div>
+            <table class="transition-table"><thead><tr><th>STATE</th><th>INPUT 0</th><th>INPUT 1</th></tr></thead><tbody id="transitionTable"></tbody></table>
+          </div>
+        </article>
+      </section>
+
+      <section class="command-layout" aria-label="Attack console and battle log">
+        <article class="console-panel panel">
+          <div class="panel-topline"><span class="panel-kicker">ATTACK TERMINAL</span><span class="console-meta">ALPHABET Σ = {0, 1}</span></div>
+          <h2>Construct your attack</h2>
+          <p class="console-help" id="missionText">Mission: force the Gatekeeper to encounter two consecutive zeros.</p>
+          <form id="attackForm" novalidate>
+            <label for="attackInput">INPUT STRING <span>ε = empty string</span></label>
+            <div class="attack-entry"><span class="terminal-chevron">&gt;</span><input id="attackInput" autocomplete="off" spellcheck="false" inputmode="text" maxlength="64" placeholder="Enter 0s and 1s..." aria-describedby="inputError" /><span class="input-counter" id="inputCount">0 BITS</span></div>
+            <div class="error-text" id="inputError" aria-live="polite"></div>
+            <div class="terminal-controls"><div class="key-buttons"><button type="button" class="key-button" data-bit="0">0</button><button type="button" class="key-button" data-bit="1">1</button><button type="button" class="key-button key-secondary" id="backspaceBtn" aria-label="Delete last bit">⌫</button><button type="button" class="key-button key-secondary" id="clearBtn">CLR</button></div><button type="submit" class="attack-button" id="attackBtn">⚡ <span>EXECUTE ATTACK</span></button></div>
+          </form>
+          <div class="console-bottom"><button type="button" class="text-button" id="hintBtn">⌁ REQUEST HINT</button><button type="button" class="text-button" id="resetBtn">↻ RESET BOSS</button></div>
+          <div class="hint-box" id="hintBox" hidden></div>
+        </article>
+
+        <article class="log-panel panel">
+          <div class="panel-topline"><span class="panel-kicker">BATTLE TELEMETRY</span><span class="console-meta" id="traceCount">NO ATTACK YET</span></div>
+          <h2>Transition log</h2>
+          <div class="battle-output" id="battleOutput" aria-live="polite" aria-atomic="true"><div class="empty-output"><span class="empty-glyph">δ</span><strong>AWAITING INPUT</strong><p>Submit a string to see each state transition here.</p></div></div>
+          <div class="log-footer"><span id="currentStateLabel">CURRENT STATE: q₀</span><button type="button" id="skipBtn" class="text-button" hidden>SKIP ANIMATION »</button></div>
+        </article>
+      </section>
+
+      <section class="lesson-strip"><div class="lesson-icon">!</div><p><strong>RULE OF THE ARENA</strong> — A nonaccepting state is <em>not automatically dead</em>. A state is dead only when no sequence of future inputs can ever reach an accepting state.</p><button id="nextBossBtn" type="button" hidden>NEXT BOSS →</button></section>
+    </main>
+    <footer><span>DEAD STATE HUNT <span class="footer-dim">/ A THEORY OF COMPUTATION GAME</span></span><span>BUILT WITH HTML · CSS · JAVASCRIPT</span></footer>
+  </div>
+</body>
+</html>
