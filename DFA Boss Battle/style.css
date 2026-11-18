@@ -803,7 +803,7 @@ h2 {
     stroke: #62758d;
     stroke-width: 2.2;
     fill: none;
-    marker-end: url(#arrow);
+    marker-end: var(--arrow, url(#live-arrow));
     transition: stroke .2s,stroke-width .2s,filter .2s;
 }
 
@@ -815,7 +815,7 @@ h2 {
     stroke: #69ffee;
     stroke-width: 4;
     filter: drop-shadow(0 0 5px #38dfc2);
-    marker-end: url(#activeArrow);
+    marker-end: var(--active-arrow, url(#live-activeArrow));
 }
 
 .edge-label {
@@ -837,7 +837,7 @@ h2 {
 .entry-line {
     stroke: #abb9ca;
     stroke-width: 2.5;
-    marker-end: url(#arrow);
+    marker-end: var(--arrow, url(#live-arrow));
 }
 
 .state-circle {
@@ -1863,4 +1863,37 @@ footer {
 .sovereign .boss-armor {
     filter: none;
     background: linear-gradient(135deg, #a15172, #231c34 65%);
+}
+
+/* Post-victory review: only completed bosses appear here. */
+.review-panel {
+    margin-top: 18px;
+    padding: 22px;
+}
+
+.review-panel h2 {
+    margin: 10px 0 6px;
+}
+
+.review-panel p {
+    color: var(--muted, #9eabc4);
+    line-height: 1.5;
+}
+
+.boss-review {
+    margin-top: 14px;
+    border: 1px solid rgba(148, 165, 194, 0.24);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.boss-review summary {
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.review-answer strong {
+    color: var(--teal, #44ecc8);
+    font-family: monospace;
+    letter-spacing: .12em;
 }
